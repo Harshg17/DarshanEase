@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
 const { 
   getAllTemples, 
   getTempleById, 
@@ -7,18 +8,14 @@ const {
   updateTemple, 
   deleteTemple 
 } = require('../controllers/templeController');
-const { verifyToken, authorizeRoles } = require('../middleware/authMiddleware');
 
-// Public routes (Anyone can view temples)
+// Public Routes
 router.get('/', getAllTemples);
 router.get('/:id', getTempleById);
 
-// Protected Administration Routes
-// Only ADMIN and ORGANIZER can Create or Edit
-router.post('/', verifyToken, authorizeRoles('ADMIN', 'ORGANIZER'), createTemple);
-router.put('/:id', verifyToken, authorizeRoles('ADMIN', 'ORGANIZER'), updateTemple);
-
-// Only ADMIN can Delete
-router.delete('/:id', verifyToken, authorizeRoles('ADMIN'), deleteTemple);
+// Admin Only Routes
+router.post('/', verifyToken, isAdmin, createTemple);
+router.put('/:id', verifyToken, isAdmin, updateTemple);
+router.delete('/:id', verifyToken, isAdmin, deleteTemple);
 
 module.exports = router;

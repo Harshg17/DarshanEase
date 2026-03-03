@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 const TempleDetails = () => {
   const { id } = useParams();
-  const { user } = useContext(AuthContext); // Check if user is logged in
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   
   const [temple, setTemple] = useState(null);
@@ -18,37 +18,32 @@ const TempleDetails = () => {
       try {
         const templeRes = await api.get(`/temples/${id}`);
         setTemple(templeRes.data);
-        
-        // Fetch the slots we added in Compass
         const slotsRes = await api.get(`/slots/temple/${id}`);
         setSlots(slotsRes.data);
-
-        setLoading(false);
       } catch (err) {
         toast.error('Could not fetch data');
+      } finally {
         setLoading(false);
       }
     };
     getTempleData();
   }, [id]);
 
+  // IMAGE OPTIMIZATION: Fallback function for broken URLs
+  const handleImageError = (e) => {
+    e.target.onerror = null; 
+    e.target.src = 'https://via.placeholder.com/600x400?text=Temple+Image+Not+Available';
+  };
+
   const handleBooking = async (slotId) => {
     if (!user) {
       toast.warning('Please login to book tickets');
       return navigate('/login');
     }
-
     try {
-      const bookingData = {
-        templeId: id,
-        slotId: slotId,
-        numberOfTickets: 1 // For now, we book 1 ticket
-      };
-
+      const bookingData = { templeId: id, slotId, numberOfTickets: 1 };
       await api.post('/bookings', bookingData);
       toast.success('Darshan Ticket Booked Successfully!');
-      
-      // Refresh slots to show updated ticket count
       const updatedSlots = await api.get(`/slots/temple/${id}`);
       setSlots(updatedSlots.data);
     } catch (err) {
@@ -56,44 +51,63 @@ const TempleDetails = () => {
     }
   };
 
-  if (loading) return <div className="text-center mt-5"><div className="spinner-border"></div></div>;
+  if (loading) return (
+    <div className="d-flex justify-content-center align-items-center" style={{height: '80vh'}}>
+      <div className="spinner-grow text-primary" role="status"></div>
+    </div>
+  );
 
   return (
     <div className="container mt-5">
-      <div className="row">
+      <div className="row g-4">
+        {/* LEFT COLUMN: Optimized Image Section */}
         <div className="col-md-6">
-          <img src={temple?.imageUrl} alt={temple?.name} className="img-fluid rounded shadow" />
+          <div className="position-relative overflow-hidden rounded shadow-lg bg-light" style={{ minHeight: '350px' }}>
+            <img 
+              src={temple?.imageUrl || 'https://via.placeholder.com/600x400?text=No+Image+Provided'} 
+              alt={temple?.name} 
+              className="img-fluid w-100 h-100" 
+              style={{ objectFit: 'cover', minHeight: '350px' }}
+              onError={handleImageError}
+              crossOrigin="anonymous"
+            />
+          </div>
         </div>
+
+        {/* RIGHT COLUMN: Details & Slots */}
         <div className="col-md-6">
-          <h1 className="fw-bold">{temple?.name}</h1>
-          <p className="text-muted">📍 {temple?.location}</p>
-          <p>{temple?.description}</p>
-          <hr />
-          <h4>Select a Darshan Slot</h4>
-          <div className="list-group mt-3">
-            {slots.length > 0 ? (
-              slots.map((slot) => (
-                <div key={slot._id} className="list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm">
-                  <div>
-                    <h6 className="mb-0">{new Date(slot.date).toLocaleDateString()}</h6>
-                    <small className="text-primary">{slot.time}</small>
-                    <br />
-                    <small className={slot.availableTickets > 0 ? "text-success" : "text-danger"}>
-                      {slot.availableTickets} tickets left
-                    </small>
+          <div className="p-3">
+            <h1 className="fw-bold text-primary display-5">{temple?.name}</h1>
+            <p className="text-muted fs-5"><i className="bi bi-geo-alt-fill text-danger"></i> {temple?.location}</p>
+            <p className="lead">{temple?.description}</p>
+            
+            <hr className="my-4" />
+            
+            <h4 className="fw-bold mb-3">Available Darshan Slots</h4>
+            <div className="list-group">
+              {slots.length > 0 ? (
+                slots.map((slot) => (
+                  <div key={slot._id} className="list-group-item d-flex justify-content-between align-items-center p-3 mb-2 border-0 shadow-sm rounded">
+                    <div>
+                      <h6 className="mb-1 fw-bold">{new Date(slot.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h6>
+                      <span className="badge bg-primary-subtle text-primary border border-primary-subtle px-3">{slot.time}</span>
+                      <p className={`mb-0 mt-1 small ${slot.availableTickets > 5 ? "text-success" : "text-danger"}`}>
+                        {slot.availableTickets} tickets remaining
+                      </p>
+                    </div>
+                    <button 
+                      className={`btn ${slot.availableTickets > 0 ? 'btn-success' : 'btn-secondary'} px-4 rounded-pill fw-bold`}
+                      onClick={() => handleBooking(slot._id)}
+                      disabled={slot.availableTickets === 0}
+                    >
+                      {slot.availableTickets > 0 ? 'Book' : 'Sold Out'}
+                    </button>
                   </div>
-                  <button 
-                    className="btn btn-sm btn-success" 
-                    onClick={() => handleBooking(slot._id)}
-                    disabled={slot.availableTickets === 0}
-                  >
-                    {slot.availableTickets > 0 ? 'Book Now' : 'Full'}
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-muted">No slots found for this temple.</p>
-            )}
+                ))
+              ) : (
+                <div className="alert alert-info">No darshan slots currently scheduled for this temple.</div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 // 1. Middleware to verify if the user is logged in (Valid Token)
 exports.verifyToken = (req, res, next) => {
