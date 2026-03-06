@@ -1,29 +1,38 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const AddTemple = () => {
   const [formData, setFormData] = useState({
     name: '',
     location: '',
     description: '',
-    imageUrl: ''
+    imageUrls: '' // We'll collect this as a long string
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      await api.post('/temples', formData);
-      toast.success('Temple added successfully!');
-      navigate('/'); // Go back to home to see the new temple
+      // Convert comma-separated string into a clean array of URLs
+      const imagesArray = formData.imageUrls
+        .split(',')
+        .map(url => url.trim())
+        .filter(url => url !== "");
+
+      const payload = {
+        ...formData,
+        images: imagesArray, // Sending as 'images' array for the Carousel
+        imageUrl: imagesArray[0] // Fallback for components still using single imageUrl
+      };
+
+      await api.post('/temples', payload);
+      toast.success('Temple added successfully with gallery!');
+      navigate('/');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to add temple');
     } finally {
@@ -34,58 +43,64 @@ const AddTemple = () => {
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card shadow border-0 p-4">
-            <h2 className="text-center fw-bold mb-4 text-primary">Add New Temple</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label fw-bold">Temple Name</label>
-                <input 
-                  type="text" name="name" className="form-control" 
-                  placeholder="e.g. Somnath Temple" required 
-                  onChange={handleChange} 
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label fw-bold">Location</label>
-                <input 
-                  type="text" name="location" className="form-control" 
-                  placeholder="e.g. Gujarat, India" required 
-                  onChange={handleChange} 
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label fw-bold">Description</label>
-                <textarea 
-                  name="description" className="form-control" rows="3" 
-                  placeholder="Brief history or details..." required 
-                  onChange={handleChange}
-                ></textarea>
-              </div>
-              <div className="mb-3">
-                <label className="form-label fw-bold">Image URL</label>
-                <input 
-                  type="text" name="imageUrl" className="form-control" 
-                  placeholder="https://example.com/image.jpg" 
-                  onChange={handleChange} 
-                />
-                <div className="form-text mt-2">
-                  Find an image online, right-click it, and select "Copy Image Address".
-                </div>
-              </div>
+        <div className="col-md-8">
+          <div className="card shadow-lg border-0 rounded-4">
+            <div className="card-body p-5">
+              <h2 className="fw-bold text-center mb-4">Add New Temple</h2>
               
-              {/* Image Preview */}
-              {formData.imageUrl && (
+              <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <p className="small text-muted mb-1">Preview:</p>
-                  <img src={formData.imageUrl} alt="Preview" className="img-thumbnail" style={{ maxHeight: '150px' }} />
+                  <label className="form-label fw-bold">Temple Name</label>
+                  <input 
+                    type="text" className="form-control rounded-pill px-3"
+                    placeholder="e.g. Kedarnath Temple"
+                    required
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  />
                 </div>
-              )}
 
-              <button type="submit" className="btn btn-primary w-100 fw-bold" disabled={loading}>
-                {loading ? 'Saving...' : 'Create Temple'}
-              </button>
-            </form>
+                <div className="mb-3">
+                  <label className="form-label fw-bold">Location</label>
+                  <input 
+                    type="text" className="form-control rounded-pill px-3"
+                    placeholder="e.g. Uttarakhand, India"
+                    required
+                    onChange={(e) => setFormData({...formData, location: e.target.value})}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label fw-bold">Description</label>
+                  <textarea 
+                    className="form-control rounded-4 px-3" rows="3"
+                    placeholder="Tell us about the temple's history and significance..."
+                    required
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  ></textarea>
+                </div>
+
+                <div className="mb-4">
+                  <label className="form-label fw-bold">Image Gallery URLs (Comma Separated)</label>
+                  <textarea 
+                    className="form-control rounded-4 px-3" rows="3"
+                    placeholder="Paste URLs here, separated by commas: https://link1.com, https://link2.com"
+                    required
+                    onChange={(e) => setFormData({...formData, imageUrls: e.target.value})}
+                  ></textarea>
+                  <div className="form-text text-muted">
+                    Tip: The first URL will be the main thumbnail image.
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  className="btn btn-warning w-100 rounded-pill fw-bold py-2 shadow-sm"
+                  disabled={loading}
+                >
+                  {loading ? 'Adding Temple...' : 'Launch Temple Page'}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

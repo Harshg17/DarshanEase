@@ -3,9 +3,11 @@ const mongoose = require('mongoose');
 const templeSchema = new mongoose.Schema({
   name: { type: String, required: true },
   location: { type: String, required: true },
-  description: { type: String },
+  description: { type: String, required: true },
   
-  imageUrl: { type: String, default: 'https://via.placeholder.com/400x250?text=No+Temple+Image' },
+  imageUrl: { type: String }, 
+  
+  images: [{ type: String }] 
 }, { timestamps: true });
 
-module.exports = mongoose.model('Temple', templeSchema, 'temples');
+module.exports = mongoose.model('Temple', templeSchema);

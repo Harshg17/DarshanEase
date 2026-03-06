@@ -27,12 +27,20 @@ exports.getTempleById = async (req, res) => {
 
 exports.createTemple = async (req, res) => {
   try {
-    const { name, location, description, imageUrl } = req.body;
-    const newTemple = new Temple({ name, location, description, imageUrl });
+    const { name, location, description, images, imageUrl } = req.body;
+    
+    const newTemple = new Temple({
+      name,
+      location,
+      description,
+      images, 
+      imageUrl: imageUrl || images[0] 
+    });
+
     await newTemple.save();
     res.status(201).json(newTemple);
   } catch (error) {
-    res.status(500).json({ message: 'Server Error creating temple', error: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
