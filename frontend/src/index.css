@@ -13,6 +13,22 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.footer{
+  background-color: #ffc107;
+}
+
+.footer-link:hover {
+  color: #ffc107 !important; /* Bootstrap warning yellow */
+  transition: color 0.3s ease;
+}
+
+.footer-icon:hover {
+  color: #fff !important;
+  transform: translateY(-3px);
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
 a {
   font-weight: 500;
   color: #646cff;

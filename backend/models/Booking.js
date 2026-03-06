@@ -8,5 +8,5 @@ const bookingSchema = new mongoose.Schema({
   status: { type: String, enum: ['BOOKED', 'CANCELLED'], default: 'BOOKED' }
 }, { timestamps: true });
 
-// We explicitly name the collection 'bookings'
+
 module.exports = mongoose.model('Booking', bookingSchema, 'bookings');

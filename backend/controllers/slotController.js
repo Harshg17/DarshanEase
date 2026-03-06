@@ -9,7 +9,7 @@ exports.getSlotsByTemple = async (req, res) => {
   }
 };
 
-// Add a new slot
+
 exports.createSlot = async (req, res) => {
   try {
     const { templeId, date, time, availableTickets } = req.body;
@@ -21,7 +21,7 @@ exports.createSlot = async (req, res) => {
   }
 };
 
-// Update a slot (e.g., change time or add more tickets)
+
 exports.updateSlot = async (req, res) => {
   try {
     const updatedSlot = await DarshanSlot.findByIdAndUpdate(
@@ -35,7 +35,7 @@ exports.updateSlot = async (req, res) => {
   }
 };
 
-// Delete a slot
+
 exports.deleteSlot = async (req, res) => {
   try {
     await DarshanSlot.findByIdAndDelete(req.params.id);

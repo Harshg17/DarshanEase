@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express();
 
-// 1. MIDDLEWARE (Must be before routes)
+// 1. MIDDLEWARE
 app.use(cors());
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));

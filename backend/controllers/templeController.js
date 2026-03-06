@@ -1,7 +1,7 @@
 const Temple = require('../models/Temple');
 
-// @route   GET /api/temples
-// @desc    Get all temples (Public)
+
+
 exports.getAllTemples = async (req, res) => {
   try {
     const temples = await Temple.find();
@@ -11,8 +11,8 @@ exports.getAllTemples = async (req, res) => {
   }
 };
 
-// @route   GET /api/temples/:id
-// @desc    Get a single temple by ID (Public)
+
+
 exports.getTempleById = async (req, res) => {
   try {
     const temple = await Temple.findById(req.params.id);
@@ -23,8 +23,8 @@ exports.getTempleById = async (req, res) => {
   }
 };
 
-// @route   POST /api/temples
-// @desc    Create a new temple (Admin/Organizer Only)
+
+
 exports.createTemple = async (req, res) => {
   try {
     const { name, location, description, imageUrl } = req.body;
@@ -36,8 +36,8 @@ exports.createTemple = async (req, res) => {
   }
 };
 
-// @route   PUT /api/temples/:id
-// @desc    Update a temple (Admin/Organizer Only)
+
+
 exports.updateTemple = async (req, res) => {
   try {
     const temple = await Temple.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -48,8 +48,8 @@ exports.updateTemple = async (req, res) => {
   }
 };
 
-// @route   DELETE /api/temples/:id
-// @desc    Delete a temple (Admin Only)
+
+
 exports.deleteTemple = async (req, res) => {
   try {
     const deletedTemple = await Temple.findByIdAndDelete(req.params.id);

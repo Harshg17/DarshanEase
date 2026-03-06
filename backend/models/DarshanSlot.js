@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const darshanSlotSchema = new mongoose.Schema({
-  // Make sure this matches what we send from the frontend!
+  
   templeId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Temple', 
