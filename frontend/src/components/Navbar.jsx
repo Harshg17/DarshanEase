@@ -89,7 +89,7 @@ const Navbar = () => {
 
 // Custom "Unique" Styling
 const navStyles = {
-  background: 'rgba(255, 255, 255, 0.05)',
+  background: 'rgba(253, 69, 13, 0.1)',
   backdropFilter: 'blur(10px)',
   marginTop: '15px',
   zIndex: 1050

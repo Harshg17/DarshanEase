@@ -1,29 +1,46 @@
 const DarshanSlot = require('../models/DarshanSlot');
 
-// Create a new slot (Admin/Organizer Only)
-exports.createSlot = async (req, res) => {
-  try {
-    const { templeId, date, time, totalCapacity } = req.body;
-    const newSlot = new DarshanSlot({
-      templeId,
-      date,
-      time,
-      totalCapacity,
-      availableTickets: totalCapacity // Initially, all tickets are available
-    });
-    await newSlot.save();
-    res.status(201).json(newSlot);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating slot', error: error.message });
-  }
-};
-
-// Get all slots for a specific temple (Public)
-exports.getSlotsByTemple = async (req, res) => {
+exports.getSlotsByTemple = async (req, res) => { 
   try {
     const slots = await DarshanSlot.find({ templeId: req.params.templeId });
     res.status(200).json(slots);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching slots', error: error.message });
+    res.status(500).json({ message: 'Error fetching slots' });
+  }
+};
+
+// Add a new slot
+exports.createSlot = async (req, res) => {
+  try {
+    const { templeId, date, time, availableTickets } = req.body;
+    const newSlot = new DarshanSlot({ templeId, date, time, availableTickets });
+    await newSlot.save();
+    res.status(201).json({ message: 'Slot added successfully', slot: newSlot });
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding slot', error: error.message });
+  }
+};
+
+// Update a slot (e.g., change time or add more tickets)
+exports.updateSlot = async (req, res) => {
+  try {
+    const updatedSlot = await DarshanSlot.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.status(200).json(updatedSlot);
+  } catch (error) {
+    res.status(500).json({ message: 'Update failed', error: error.message });
+  }
+};
+
+// Delete a slot
+exports.deleteSlot = async (req, res) => {
+  try {
+    await DarshanSlot.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'Slot removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Delete failed', error: error.message });
   }
 };
