@@ -1,84 +1,107 @@
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --brand-saffron: #FF9933;
+  --brand-dark: #1a1a1a;
+  --bg-light: #fcfcfc;
+  
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.footer{
-  background-color: #ffc107;
+/* --- Global Reset & Layout --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-light);
+  color: #333;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Fix for the "boxed" look: Remove flex centering on body */
+body {
+  display: block; 
+}
+
+/* --- Typography --- */
+.hindi-font {
+  font-family: 'Tiro Devanagari Hindi', serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--brand-dark);
+  font-weight: 700;
+}
+
+a {
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+/* --- Layout Spacing (The One Fix) --- */
+/* This ensures content doesn't hide behind the fixed-top navbar */
+.pt-navbar {
+  padding-top: 100px !important;
+}
+
+@media (max-width: 991px) {
+  .pt-navbar {
+    padding-top: 85px !important;
+  }
+}
+
+/* --- UI Components --- */
+.transition-all {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+/* --- Footer Refinement --- */
+.footer-section {
+  background-color: var(--brand-dark);
+  color: white;
+  width: 100% !important;
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.7);
+  transition: 0.3s;
 }
 
 .footer-link:hover {
-  color: #ffc107 !important; /* Bootstrap warning yellow */
-  transition: color 0.3s ease;
+  color: var(--brand-saffron) !important;
+  padding-left: 5px; /* Subtle slide effect */
 }
 
 .footer-icon:hover {
-  color: #fff !important;
+  color: var(--brand-saffron) !important;
   transform: translateY(-3px);
   transition: all 0.3s ease;
   display: inline-block;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+/* --- Bootstrap Container Overrides --- */
+/* This makes sure your site feels spacious but aligned */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
   }
 }

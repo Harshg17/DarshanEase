@@ -1,7 +1,13 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
+import { useEffect } from 'react';
+import AOS from 'aos';
+
+// Styles
 import 'react-toastify/dist/ReactToastify.css';
+import 'aos/dist/aos.css'; 
+import './index.css';
 
 // Components
 import Navbar from './components/Navbar';
@@ -13,44 +19,68 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import TempleDetails from './pages/TempleDetails';
 import MyBookings from './pages/MyBookings';
+import AboutContact from './pages/AboutContact';
 
 // Admin Pages
 import AddTemple from './pages/admin/AddTemple';
 import EditTemple from './pages/admin/EditTemple';
 import AddSlot from './pages/admin/AddSlot';
 
+// --- THE ONE FIX FOR ALL ---
+// This sub-component controls the layout of the entire site
+const MainLayout = ({ children }) => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  return (
+    <main className={`flex-grow-1 ${isHomePage ? "" : "pt-navbar pb-5"}`}>
+      {isHomePage ? (
+        /* Home page remains full-width for the Hero section */
+        children
+      ) : (
+        /* Every other page is automatically centered and padded */
+        <div className="container mt-4">
+          {children}
+        </div>
+      )}
+    </main>
+  );
+};
 
 function App() {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+      easing: 'ease-in-out',
+    });
+  }, []);
+
   return (
     <AuthProvider>
       <Router>
-        {/* 
-          The d-flex, flex-column, and min-vh-100 classes force the 
-          layout to take up at least 100% of the viewport height. 
-        */}
         <div className="d-flex flex-column min-vh-100">
           <Navbar />
           <ToastContainer position="top-right" autoClose={3000} />
           
-          {/* flex-grow-1 pushes the footer to the bottom */}
-          <main className="flex-grow-1">
+          <MainLayout>
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/temple/:id" element={<TempleDetails />} />
+              <Route path="/about" element={<AboutContact />} />
               
-              {/* Protected User Routes */}
+              {/* User Routes */}
               <Route path="/my-bookings" element={<MyBookings />} /> 
               
               {/* Admin Routes */}
               <Route path="/admin/add-temple" element={<AddTemple />} />
               <Route path="/admin/edit-temple/:id" element={<EditTemple />} />
               <Route path="/admin/add-slot/:id" element={<AddSlot />} />
-              
             </Routes>
-          </main>
+          </MainLayout>
 
           <Footer />
         </div>

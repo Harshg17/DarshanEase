@@ -45,7 +45,7 @@ const MyBookings = () => {
   if (loading) return <div className="text-center mt-5"><div className="spinner-border text-primary"></div></div>;
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 pb-5">
       <h2 className="mb-4 text-primary fw-bold">My Darshan Tickets</h2>
       
       {bookings.length === 0 ? (
